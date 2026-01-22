@@ -6,11 +6,13 @@ package Controller;
 
 import Model.GestorInventario;
 import View.VentanaPrincipal;
+
 /**
  *
  * @author TioBicho
  */
 public class PrincipalController {
+
     private GestorInventario modelo;
     private VentanaPrincipal vista;
 
@@ -36,5 +38,12 @@ public class PrincipalController {
 
     public void abrirVentanaInventario() {
         new InventarioController(modelo);
+    }
+
+    public void crearNuevaCategoria(String nombre) {
+        if (nombre != null && !nombre.trim().isEmpty()) {
+            modelo.agregarCategoria(nombre);
+            javax.swing.JOptionPane.showMessageDialog(null, "Categoría creada exitosamente.");
+        }
     }
 }

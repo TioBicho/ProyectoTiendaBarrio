@@ -9,7 +9,6 @@ package Model;
  * @author TioBicho
  */
 public abstract class ProductoBase implements IProducto {
-    // ATRIBUTOS PRIVADOS (Encapsulamiento Correcto)
     private String codigo;
     private String nombre;
     private Categoria categoria;
@@ -23,8 +22,6 @@ public abstract class ProductoBase implements IProducto {
         this.precio = precio;
         this.stock = stock;
     }
-
-    // GETTERS Y SETTERS OBLIGATORIOS
 
     public String getCodigo() {
         return codigo;
@@ -71,4 +68,6 @@ public abstract class ProductoBase implements IProducto {
 
     @Override
     public abstract String mostrarDetalles();
+    
+    public abstract double calcularValorInventario();
 }

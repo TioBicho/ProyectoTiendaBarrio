@@ -18,7 +18,6 @@ public class Producto extends ProductoBase {
 
     @Override
     public String mostrarDetalles() {
-        // Acceso correcto a través de métodos públicos
         return "Prod: " + getNombre() + " [" + getCodigo() + "] - Stock: " + getStock();
     }
 
@@ -26,4 +25,9 @@ public class Producto extends ProductoBase {
     public boolean verificarStockBajo() {
         return getStock() <= UMBRAL_BAJO_STOCK;
     }
+    
+    @Override
+    public double calcularValorInventario() {
+        return getPrecio() * getStock();
+}
 }

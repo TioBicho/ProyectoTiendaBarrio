@@ -9,15 +9,17 @@ import Model.ProductoBase;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author TioBicho
  */
 public class VentanaInventario extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaInventario.class.getName());
     private InventarioController controlador;
     private DefaultTableModel modeloTabla;
+
     /**
      * Creates new form VentanaInventario
      */
@@ -28,13 +30,20 @@ public class VentanaInventario extends javax.swing.JFrame {
         modeloTabla = (DefaultTableModel) tblProductos.getModel();
         actualizarTabla(controlador.listarProductos());
     }
-    
+
     private void actualizarTabla(List<ProductoBase> lista) {
-        modeloTabla.setRowCount(0); // Limpiar tabla
+        modeloTabla.setRowCount(0);
         for (ProductoBase p : lista) {
             String estado = p.verificarStockBajo() ? "BAJO STOCK" : "OK";
+            double valorTotal = p.calcularValorInventario();
             modeloTabla.addRow(new Object[]{
-                p.getCodigo(), p.getNombre(), p.getCategoria(), p.getPrecio(), p.getStock(), estado
+                p.getCodigo(),
+                p.getNombre(),
+                p.getCategoria(),
+                p.getPrecio(),
+                p.getStock(),
+                estado,
+                String.format("$ %.2f", valorTotal)
             });
         }
     }
@@ -54,6 +63,7 @@ public class VentanaInventario extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblProductos = new javax.swing.JTable();
         btnBuscar = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -64,21 +74,25 @@ public class VentanaInventario extends javax.swing.JFrame {
 
         tblProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Codigo", "Nombre", "Tipo", "Precio", "Stock", "Estado"
+                "Codigo", "Nombre", "Tipo", "Precio", "Stock", "Estado", "Valor Total"
             }
         ));
         jScrollPane1.setViewportView(tblProductos);
 
         btnBuscar.setText("Buscar");
         btnBuscar.addActionListener(this::btnBuscarActionPerformed);
+
+        btnEditar.setText("Editar");
+        btnEditar.addActionListener(this::btnEditarActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -93,10 +107,12 @@ public class VentanaInventario extends javax.swing.JFrame {
                 .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnTodo)
-                .addContainerGap(404, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnEditar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 510, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 291, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,7 +122,8 @@ public class VentanaInventario extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(txtBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnTodo)
-                    .addComponent(btnBuscar))
+                    .addComponent(btnBuscar)
+                    .addComponent(btnEditar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -133,10 +150,33 @@ public class VentanaInventario extends javax.swing.JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Producto no encontrado.");
             }
+        }
     }//GEN-LAST:event_btnBuscarActionPerformed
-}
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        int filaSeleccionada = tblProductos.getSelectedRow();
+
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(this, "Primero selecciona un producto de la tabla (haz clic en una fila).");
+            return;
+        }
+        String codigo = tblProductos.getValueAt(filaSeleccionada, 0).toString();
+        ProductoBase productoAEditar = controlador.buscarProducto(codigo);
+
+        if (productoAEditar != null) {
+            VentanaEditar ventanaEdicion = new VentanaEditar(this, true, productoAEditar);
+            ventanaEdicion.setVisible(true);
+            if (ventanaEdicion.isGuardado()) {
+                actualizarTabla(controlador.listarProductos());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Error crítico: No se encontró el producto en memoria.");
+        }
+    }//GEN-LAST:event_btnEditarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnTodo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

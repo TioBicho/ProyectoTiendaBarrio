@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GestorInventario {
+
     private List<ProductoBase> listaProductos;
     private List<Categoria> listaCategorias;
     private List<MovimientoInventario> historialMovimientos;
@@ -20,16 +21,20 @@ public class GestorInventario {
         this.listaProductos = new ArrayList<>();
         this.listaCategorias = new ArrayList<>();
         this.historialMovimientos = new ArrayList<>();
-        
-        // Datos de prueba
+
         listaCategorias.add(new Categoria("Bebidas"));
         listaCategorias.add(new Categoria("Abarrotes"));
         listaCategorias.add(new Categoria("Aseo"));
     }
 
-    // --- PRODUCTOS ---
+    public void agregarCategoria(String nombreNuevaCategoria) {
+        listaCategorias.add(new Categoria(nombreNuevaCategoria));
+    }
+
     public boolean agregarProducto(String codigo, String nombre, Categoria cat, double precio, int stockInicial) {
-        if (buscarProducto(codigo) != null) return false;
+        if (buscarProducto(codigo) != null) {
+            return false;
+        }
         Producto nuevo = new Producto(codigo, nombre, cat, precio, stockInicial);
         return listaProductos.add(nuevo);
     }
@@ -42,28 +47,33 @@ public class GestorInventario {
         }
         return null;
     }
-    
-    public List<ProductoBase> getListaProductos() { return listaProductos; }
-    public List<Categoria> getListaCategorias() { return listaCategorias; }
 
-    // --- MOVIMIENTOS SIMPLIFICADOS ---
+    public List<ProductoBase> getListaProductos() {
+        return listaProductos;
+    }
+
+    public List<Categoria> getListaCategorias() {
+        return listaCategorias;
+    }
+
     public boolean registrarMovimiento(String codigoProd, String tipo, int cantidad) {
         ProductoBase p = buscarProducto(codigoProd);
-        if (p == null) return false;
+        if (p == null) {
+            return false;
+        }
 
         try {
             if (tipo.equalsIgnoreCase("ENTRADA")) {
                 p.setStock(p.getStock() + cantidad);
             } else {
-                // Validación stock negativo
-                if (p.getStock() - cantidad < 0) return false;
+                if (p.getStock() - cantidad < 0) {
+                    return false;
+                }
                 p.setStock(p.getStock() - cantidad);
             }
-            
-            // Guardamos movimiento simple
             historialMovimientos.add(new MovimientoInventario(tipo, cantidad, p.getNombre()));
             return true;
-            
+
         } catch (IllegalArgumentException e) {
             return false;
         }
