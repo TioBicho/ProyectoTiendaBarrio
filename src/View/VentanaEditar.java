@@ -133,8 +133,6 @@ public class VentanaEditar extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "El precio no puede ser negativo.");
                 return;
             }
-
-            // Actualizamos los datos del objeto original
             producto.setNombre(nuevoNombre);
             producto.setPrecio(nuevoPrecio);
             

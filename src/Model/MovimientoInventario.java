@@ -51,7 +51,6 @@ private String fecha;
         return nombreProducto;
     }
 
-    // Getters y Setters
     public void setNombreProducto(String nombreProducto) {   
         this.nombreProducto = nombreProducto;
     }

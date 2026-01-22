@@ -22,12 +22,10 @@ public class MovimientosController {
     }
 
     public boolean registrarEntrada(String codigo, int cantidad) {
-        // Pasamos el String literal "ENTRADA"
         return modelo.registrarMovimiento(codigo, "ENTRADA", cantidad);
     }
 
     public boolean registrarSalida(String codigo, int cantidad) {
-        // Pasamos el String literal "SALIDA"
         return modelo.registrarMovimiento(codigo, "SALIDA", cantidad);
     }
 }
